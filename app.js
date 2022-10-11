@@ -18,13 +18,14 @@ const pool = new Pool({
 
 var indexRouter = require('./routes/index')(pool);
 var usersRouter = require('./routes/users')(pool);
-var homeRouter = require('./routes/home')(pool);
 var unitsRouter = require('./routes/units')(pool);
 var goodsRouter = require('./routes/goods')(pool);
 var suppliersRouter = require('./routes/suppliers')(pool);
 var purchaseRouter = require('./routes/purchase')(pool);
 var customersRouter = require('./routes/customers')(pool);
 var saleRouter = require('./routes/sale')(pool);
+var dashboardRouter = require('./routes/dashboard')(pool);
+
 
 
 
@@ -49,13 +50,14 @@ app.use(fileUpload());
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
-app.use('/home', homeRouter);
 app.use('/units', unitsRouter);
 app.use('/goods', goodsRouter);
 app.use('/purchase', purchaseRouter);
 app.use('/suppliers', suppliersRouter);
 app.use('/customers', customersRouter);
 app.use('/sale', saleRouter);
+app.use('/dashboard', dashboardRouter);
+
 
 
 

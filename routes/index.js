@@ -13,14 +13,11 @@ module.exports = (db) => {
   router.post('/login', async function (req, res, next) {
     try {
       const { email, password } = req.body
-      console.log(email, password)
       const { rows: emails } = await db.query('SELECT * FROM users WHERE email = $1', [email])
       //res.json(emails)
 
       if (emails.length == 0) return res.send('email tidak terdaftar')
-      console.log(password, emails[0].password, !bcrypt.compareSync(password, emails[0].password))
       if (!bcrypt.compareSync(password, emails[0].password)) {
-        console.log('password beda')
         return res.send('password salah')
       }
 
@@ -47,7 +44,6 @@ module.exports = (db) => {
   router.post('/register', async function (req, res, next) {
     try {
       const { name, email, password, role } = req.body
-      console.log(email, name, password)
       const { rows: emails } = await db.query('SELECT * FROM users WHERE email = $1', [email])
       //res.json(emails)
 
@@ -62,8 +58,8 @@ module.exports = (db) => {
     }
   });
   //DASHBOARD
-  router.get('/dashboard',isLoggedIn, function (req, res, next) {
-    res.render('dashboard', { user: req.session.user })
+  router.get('/view',isLoggedIn, function (req, res, next) {
+    res.render('view', { user: req.session.user })
   });
 
   return router;

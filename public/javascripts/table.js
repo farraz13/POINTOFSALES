@@ -353,5 +353,12 @@ $(document).ready(function () {
       },
     ]
   });
+  $('#dashboards-table').DataTable({
+    lengthMenu: [
+      [3, 5, 10, 100],
+      [3, 5, 10, 100],
+    ],
+    "ordering": false
+  });
 });
 
