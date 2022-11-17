@@ -3,18 +3,21 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+var session = require('express-session')
+
 
 const { Pool } = require('pg')
 const pool = new Pool({
   user: 'postgres',
   host: 'localhost',
-  database: 'poses',
-  password: '130903',
+  database: 'posdb',
+  password: '12345',
   port: 5432,
 })
 
 var indexRouter = require('./routes/index')(pool);
 var usersRouter = require('./routes/users');
+var homeRouter = require('./routes/home')(pool);
 
 var app = express();
 
@@ -27,9 +30,16 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(session({
+  secret: 'rubicamp',
+  resave: false,
+  saveUninitialized: true,
+  cookie: { secure: true }
+}))
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+app.use('/home', homeRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
