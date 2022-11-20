@@ -4,15 +4,18 @@ var router = express.Router();
 
 module.exports = (db) =>{
 router.get('/', function(req, res, next) {
-  res.send('respond with a resource');
+  res.render('usersPage/list');
 });
 
 router.get('/datatable', async (req, res) => {
   let params = []
 
   if(req.query.search.value){
-      params.push(`username ilike '%${req.query.search.value}%'`)
+      params.push(`name ilike '%${req.query.search.value}%'`)
   }
+  if(req.query.search.value){
+    params.push(`email ilike '%${req.query.search.value}%'`)
+}
 
   const limit = req.query.length
   const offset = req.query.start
