@@ -1,6 +1,6 @@
 $(document).ready(function () {
     $('#tableUsers').DataTable({
-        "lengthMenu": [[1, 5,10, -1], [1, 5, 10, "All"]],
+        "lengthMenu": [[3, 5,10, -1], [3, 5, 10, "All"]],
         "processing": true,
         "serverSide": true,
         "ajax": "/users/datatable",
@@ -12,7 +12,12 @@ $(document).ready(function () {
             {
                 "data": "userid",
                 render : function (data){
-                    return ``
+                    return `
+                    
+                    <button type="button" class='btn btn-success'><i class="fa-solid fa-pen"></i></button>
+                    <a type="button" href ="/users/delete/${data}" class='btn btn-danger'><i class="fa-solid fa-trash"></i></a>
+                    
+                    `
                 }
             },
         ]

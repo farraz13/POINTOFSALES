@@ -7,6 +7,7 @@ router.get('/', function(req, res, next) {
   res.render('usersPage/list');
 });
 
+//DATATABLE
 router.get('/datatable', async (req, res) => {
   let params = []
 
@@ -32,6 +33,14 @@ router.get('/datatable', async (req, res) => {
     }
   res.json(response)
 })
+
+//DELETE
+router.get('/delete/:userid', function (req, res, next) {
+  db.query('DELETE FROM users WHERE userid =$1', [Number(req.params.userid)], (err) => {
+    if (err) return res.send(err, 'error bang')
+    res.redirect('/')
+  });
+});
 
 return router;
 };
