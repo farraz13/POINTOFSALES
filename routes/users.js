@@ -33,6 +33,7 @@ router.get('/datatable', async (req, res) => {
     }
   res.json(response)
 })
+//akhirDATATABLE
 
 //DELETE
 router.get('/delete/:userid', function (req, res, next) {
@@ -41,6 +42,26 @@ router.get('/delete/:userid', function (req, res, next) {
     res.redirect('/')
   });
 });
+//akhirDELETE
+
+//EDIT
+router.get('/edit/:userid', function (req, res, next) {
+  db.query('SELECT * FROM users WHERE userid =$1', [Number(req.params.userid)], (err, data) => {
+    if (err) return res.send(err, 'error bang')
+    if (data.rows.length == 0) return res.send(err, 'data not found')
+    res.render('usersPage/edit', { item: data.rows[0] })
+  })
+});
+
+router.post('/edit/:userid', function (req, res, next) {
+  const {userid} = req.params
+  const { email, name, role } = req.body
+  db.query('UPDATE users SET email = $1, name = $2, role = $3 WHERE userid = $4', [email, name, role,userid], (err) => {
+    if (err) return res.send(err, 'error bang')
+    res.redirect('/users')
+  })
+})
+//akhirEDIT
 
 return router;
 };

@@ -14,7 +14,7 @@ $(document).ready(function () {
                 render : function (data){
                     return `
                     
-                    <button type="button" class='btn btn-success'><i class="fa-solid fa-pen"></i></button>
+                    <a type="button" href ="/users/edit/${data}" class='btn btn-success'><i class="fa-solid fa-pen"></i></a>
                     <a type="button" href ="/users/delete/${data}" class='btn btn-danger'><i class="fa-solid fa-trash"></i></a>
                     
                     `
