@@ -33,8 +33,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(session({
   secret: 'rubicamp',
   resave: false,
-  saveUninitialized: true,
-  cookie: { secure: true }
+  saveUninitialized: true
 }))
 
 app.use('/', indexRouter);

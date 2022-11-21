@@ -39,7 +39,7 @@ router.get('/datatable', async (req, res) => {
 router.get('/delete/:userid', function (req, res, next) {
   db.query('DELETE FROM users WHERE userid =$1', [Number(req.params.userid)], (err) => {
     if (err) return res.send(err, 'error bang')
-    res.redirect('/')
+    res.redirect('/users')
   });
 });
 //akhirDELETE
@@ -56,12 +56,15 @@ router.get('/edit/:userid', function (req, res, next) {
 router.post('/edit/:userid', function (req, res, next) {
   const {userid} = req.params
   const { email, name, role } = req.body
-  db.query('UPDATE users SET email = $1, name = $2, role = $3 WHERE userid = $4', [email, name, role,userid], (err) => {
-    if (err) return res.send(err, 'error bang')
+  db.query('UPDATE public.users SET email=$1, name=$2, role=$3 WHERE userid=$4 ', [email, name, role, userid], (err) => {
+    if (err) {
+      return res.send(err, 'error bang')
+    }
     res.redirect('/users')
   })
 })
 //akhirEDIT
+
 
 return router;
 };
