@@ -6,7 +6,7 @@ const saltRounds = 10;
 
 module.exports = (db) =>{
 router.get('/', function(req, res, next) {
-  res.render('usersPage/list');
+  res.render('usersPage/list', {user: req.session.user});
 });
 
 //DATATABLE

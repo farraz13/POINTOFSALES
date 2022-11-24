@@ -3,14 +3,7 @@ const bcrypt = require('bcrypt');
 const saltRounds = 10;
 var router = express.Router();
 
-const isLoggedIn = (req, res, next) =>{
-  if(req.session.user){
-    next()
-  }else{
-    res.redirect('/')
-  }
-}
-
+const {isLoggedIn} = require('../helpers/util')
 
 module.exports = (db) => {
   router.get('/', function (req, res, next) {
