@@ -4,6 +4,8 @@ var router = express.Router();
 const bcrypt = require('bcrypt')
 const saltRounds = 10;
 
+const {isLoggedIn} = require('../helpers/util')
+
 module.exports = (db) =>{
 router.get('/', function(req, res, next) {
   res.render('usersPage/list', {user: req.session.user});
@@ -38,7 +40,7 @@ router.get('/datatable', async (req, res) => {
 //akhirDATATABLE
 
 //DELETE
-router.get('/delete/:userid', function (req, res, next) {
+router.get('/delete/:userid', isLoggedIn , function (req, res, next) {
   db.query('DELETE FROM users WHERE userid =$1', [Number(req.params.userid)], (err) => {
     if (err) return res.send(err, 'error bang')
     res.redirect('/users')
@@ -47,7 +49,7 @@ router.get('/delete/:userid', function (req, res, next) {
 //akhirDELETE
 
 //EDIT
-router.get('/edit/:userid', function (req, res, next) {
+router.get('/edit/:userid',  isLoggedIn , function (req, res, next) {
   db.query('SELECT * FROM users WHERE userid =$1', [req.params.userid], (err, data) => {
     if (err) return res.send(err, 'error bang')
     if (data.rows.length == 0) return res.send(err, 'data not found')
@@ -55,7 +57,7 @@ router.get('/edit/:userid', function (req, res, next) {
   })
 });
 
-router.post('/edit/:userid', function (req, res, next) {
+router.post('/edit/:userid',  isLoggedIn , function (req, res, next) {
   const {userid} = req.params
   const { email, name, role } = req.body
   db.query('UPDATE public.users SET email=$1, name=$2, role=$3 WHERE userid=$4 ', [email, name, role, userid], (err) => {
@@ -68,12 +70,12 @@ router.post('/edit/:userid', function (req, res, next) {
 //akhirEDIT
 
 //ADD
-router.get('/add', function (req, res, next) {
+router.get('/add',  isLoggedIn , function (req, res, next) {
     res.render('usersPage/add')
 
 });
 
-router.post('/add', async function (req, res, next) {
+router.post('/add',  isLoggedIn , async function (req, res, next) {
   try {
     console.log(req.body)
     const { name, email, password, role } = req.body

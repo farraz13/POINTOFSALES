@@ -34,7 +34,7 @@ module.exports = (db) => {
   });
 
   //LOGOUT
-  router.get('/logout', function(req,res,next){
+  router.get('/logout', isLoggedIn, function(req,res,next){
     req.session.destroy(function (err){
       res.redirect('/')
     })

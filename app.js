@@ -4,6 +4,7 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var session = require('express-session')
+var fileUpload = require('express-fileupload')
 
 
 const { Pool } = require('pg')

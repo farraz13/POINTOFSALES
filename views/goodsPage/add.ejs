@@ -23,11 +23,12 @@
 
                                 <div class="card">
 
-                                    <form class="px-3 py-4" action="/goods/add" method="post">
+                                    <form class="px-3 py-4" action="/goods/add" method="post"
+                                        encType="multipart/form-data">
                                         <div class="form-group row">
-                                            <label for="unit" class="col-sm-2 col-form-label">Goods</label>
+                                            <label for="barcode" class="col-sm-2 col-form-label">Barcode</label>
                                             <div class="col-sm-10">
-                                                <input type="text" class="form-control" name="unit" id="email">
+                                                <input type="text" class="form-control" name="barcode" id="barcode">
                                             </div>
                                         </div>
                                         <div class="form-group row">
@@ -37,25 +38,83 @@
                                             </div>
                                         </div>
                                         <div class="form-group row">
-                                            <label for="note" class="col-sm-2 col-form-label">Note</label>
+                                            <label for="stock" class="col-sm-2 col-form-label">Stock</label>
                                             <div class="col-sm-10">
-                                                <textarea  class="form-control" name="note" id="note"></textarea>
+                                                <input type="number" class="form-control" name="stock" id="stock"
+                                                    placeholder="0">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label for="purchaseprice" class="col-sm-2 col-form-label">Purchase
+                                                Price</label>
+                                            <div class="col-sm-10">
+                                                <input type="number" class="form-control" name="purchaseprice"
+                                                    id="purchaseprice" placeholder="0">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label for="sellingprice" class="col-sm-2 col-form-label">Selling Price
+                                            </label>
+                                            <div class="col-sm-10">
+                                                <input type="number" class="form-control" name="sellingprice"
+                                                    id="sellingprice" placeholder="0">
+                                            </div>
+                                        </div>
+                                        <div class="row mb-3 form-switch">
+                                            <label for="unit" class="form-check-label col-sm-2 text-lg">Unit</label>
+                                            <div class="col-sm-10">
+                                                <select class="form-control" name="unit" required>
+                                                    <option disabled selected>Choose unit...</option>
+                                                    <% units.forEach((item)=> { %>
+                                                        <option value="<%= item.unit %>">
+                                                            <%= item.name %>
+                                                        </option>
+                                                        <% }) %>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="row mb-3 form-switch">
+                                            <label for="formFile"
+                                                class="form-check-label col-sm-2 text-lg ">Picture</label>
+                                            <div class="col-sm-10">
+                                                <div class="custom-file">
+                                                    <input type="file" class="custom-file-input" name="sampleFile"
+                                                        id="imgInp" aria-describedby="inputGroupFileAddon04">
+                                                    <label class="custom-file-label" for="imgInp">Choose file</label>
+                                                </div>
+                                                <img id="blah" class="mt-4" src="#" alt="your image" width="400"
+                                                    height="auto" />
                                             </div>
                                         </div>
 
+
+
                                         <div class="form-group row">
                                             <div class="col-sm-10 ml-5">
-                                                <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i></button>
-                                                <a href="/goods" class="btn btn-warning"><i class="fa-solid fa-arrow-rotate-left"></i></a>
+                                                <button type="submit" class="btn btn-primary"><i
+                                                        class="fa-solid fa-floppy-disk"></i></button>
+                                                <a href="/goods" class="btn btn-warning"><i
+                                                        class="fa-solid fa-arrow-rotate-left"></i></a>
                                             </div>
                                         </div>
                                     </form>
                                 </div>
                             </div>
 
-
-                            <%- include('../partials/footer') %>
                     </div>
+                    <%- include('../partials/footer') %>
 
                 </div>
+                <script>
+                    imgInp.onchange = evt => {
+                        const [file] = imgInp.files
+                        if (file) {
+                            blah.src = URL.createObjectURL(file)
+                        }
+                    }
+                    $('.custom-file-input').on('change', function () {
+                        let sampleFile = $(this).val().split('\\').pop();
+                        $(this).next('.custom-file-label').addClass("selected").html(sampleFile);
+                    });
+                </script>
                 <!-- End of Main Content -->

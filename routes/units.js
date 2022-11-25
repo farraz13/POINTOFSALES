@@ -1,4 +1,5 @@
 var express = require('express');
+const { isLoggedIn } = require('../helpers/util');
 var router = express.Router();
 
 module.exports = (db) => {
@@ -38,7 +39,7 @@ module.exports = (db) => {
     //akhirDATATABLE
 
     //DELETE
-    router.get('/delete/:unit', function (req, res, next) {
+    router.get('/delete/:unit', isLoggedIn, function (req, res, next) {
         db.query('DELETE FROM units WHERE unit =$1', [req.params.unit], (err) => {
             if (err) return res.send(err, 'error bang')
             res.redirect('/units')
@@ -47,7 +48,7 @@ module.exports = (db) => {
     //akhirDELETE
 
     //EDIT
-    router.get('/edit/:unit', async function (req, res, next) {
+    router.get('/edit/:unit', isLoggedIn, async function (req, res, next) {
         try {
            const {rows: data}= await db.query('SELECT * FROM units WHERE unit =$1', [req.params.unit])
                 
@@ -58,7 +59,7 @@ module.exports = (db) => {
         
     });
 
-    router.post('/edit/:unit', function (req, res, next) {
+    router.post('/edit/:unit', isLoggedIn, function (req, res, next) {
         const units = req.params.unit
         const { unit, name, note } = req.body
         db.query('UPDATE public.units SET unit=$1, name=$2, note=$3 WHERE unit=$4 ', [unit, name, note, units], (err) => {
@@ -71,12 +72,12 @@ module.exports = (db) => {
     //akhirEDIT
 
     //ADD
-    router.get('/add', function (req, res, next) {
+    router.get('/add', isLoggedIn, function (req, res, next) {
         res.render('unitsPage/add')
 
     });
 
-    router.post('/add', async function (req, res, next) {
+    router.post('/add', isLoggedIn, async function (req, res, next) {
         try {
             const { unit, name, note } = req.body
 
