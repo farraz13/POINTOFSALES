@@ -39,6 +39,7 @@ app.use(session({
   resave: false,
   saveUninitialized: true
 }))
+app.use(fileUpload());
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
