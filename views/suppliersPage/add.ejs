@@ -1,0 +1,61 @@
+<!-- /.container-fluid -->
+
+<%- include('../partials/header') %>
+
+    <body id="page-top">
+
+        <!-- Page Wrapper -->
+        <div id="wrapper">
+            <%- include('../partials/sidebar') %>
+
+                <!-- Content Wrapper -->
+                <div id="content-wrapper" class="d-flex flex-column">
+
+                    <!-- Main Content -->
+                    <div id="content">
+                        <%- include('../partials/topbar') %>
+
+                            <!-- Begin Page Content -->
+                            <div class="container-fluid ml-2">
+
+                                <!-- Page Heading -->
+                                <h1 class="h3 mb-4 text-gray-800">Add</h1>
+
+                                <div class="card">
+
+                                    <form class="px-3 py-4" action="" method="post">
+                                        <div class="form-group row">
+                                            <label for="name" class="col-sm-2 col-form-label">name</label>
+                                            <div class="col-sm-10">
+                                                <input type="text" class="form-control" name="name" id="name">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label for="address" class="col-sm-2 col-form-label">address</label>
+                                            <div class="col-sm-10">
+                                                <textarea  class="form-control" name="address" id="address"></textarea>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label for="phone" class="col-sm-2 col-form-label">phone</label>
+                                            <div class="col-sm-10">
+                                                <input type="number" class="form-control" name="phone" id="phone">
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group row">
+                                            <div class="col-sm-10 ml-5">
+                                                <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i></button>
+                                                <a href="/suppliers" class="btn btn-warning"><i class="fa-solid fa-arrow-rotate-left"></i></a>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+
+
+                            <%- include('../partials/footer') %>
+                    </div>
+
+                </div>
+                <!-- End of Main Content -->
