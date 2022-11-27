@@ -165,7 +165,7 @@ $(document).ready(function () {
         render: function (data) {
           return `
                   
-                  <a type="button" href ="/supliers/edit/${data}" class='btn btn-success rounded-circle'><i class="fa-solid fa-circle-info"></i></a>
+                  <a type="button" href ="/suppliers/edit/${data}" class='btn btn-success rounded-circle'><i class="fa-solid fa-circle-info"></i></a>
                  
 <button type="button" class="btn btn-danger rounded-circle" data-toggle="modal" data-target="#exampleModal${data}">
 <i class="fa-solid fa-trash"></i>
