@@ -22,6 +22,7 @@ var homeRouter = require('./routes/home')(pool);
 var unitsRouter = require('./routes/units')(pool);
 var goodsRouter = require('./routes/goods')(pool);
 var suppliersRouter = require('./routes/suppliers')(pool);
+var purchaseRouter = require('./routes/purchase')(pool);
 
 
 
@@ -48,6 +49,7 @@ app.use('/users', usersRouter);
 app.use('/home', homeRouter);
 app.use('/units', unitsRouter);
 app.use('/goods', goodsRouter);
+app.use('/purchase', purchaseRouter);
 app.use('/suppliers', suppliersRouter);
 
 // catch 404 and forward to error handler
