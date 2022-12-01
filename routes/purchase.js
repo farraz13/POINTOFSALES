@@ -1,90 +1,157 @@
 var express = require('express');
-const { isLoggedIn } = require('../helpers/util');
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
 var router = express.Router();
+const { isLoggedIn } = require('../helpers/util');
+const moment = require("moment");
 
 module.exports = (db) => {
-    router.get('/', function (req, res, next) {
-        res.render('purchasePage/list');
-    });
+  router.get('/', isLoggedIn, async function (req, res, next) {
+    try {
+      const { rows } = await db.query('SELECT * FROM purchases');
+      res.render('purchasePage/list', {
+        user: req.session.user,
+        currentPage: 'POS - Purchases',
+        user: req.session.user,
+        rows,
+      });
+    } catch (err) {
+      res.send(err);
+    }
+  });
 
-    //DATATABLE
-    router.get('/datatable', async (req, res) => {
-        let params = []
+  router.get('/datatable', async (req, res) => {
+    let params = []
 
-        if (req.query.search.value) {
-            params.push(`invoice ilike '%${req.query.search.value}%'`)
-        }
+    if(req.query.search.value){
+        params.push(`invoice ilike '%${req.query.search.value}%'`)
+    }
 
-        const limit = req.query.length
-        const offset = req.query.start
-        const sortBy = req.query.columns[req.query.order[0].column].data
-        const sortMode = req.query.order[0].dir
+    const limit = req.query.length
+    const offset = req.query.start
+    const sortBy = req.query.columns[req.query.order[0].column].data
+    const sortMode = req.query.order[0].dir
 
-        const total = await db.query(`select count(*) as total from purchases${params.length > 0 ? ` where ${params.join(' or ')}` : ''}`)
-        const data = await db.query(`select * from purchases${params.length > 0 ? ` where ${params.join(' or ')}` : ''} order by ${sortBy} ${sortMode} limit ${limit} offset ${offset} `)
-        const response = {
-            "draw": Number(req.query.draw),
-            "recordsTotal": total.rows[0].total,
-            "recordsFiltered": total.rows[0].total,
-            "data": data.rows
-        }
-        res.json(response)
+    const total = await db.query(`select count(*) as total from purchases${params.length > 0 ? ` where ${params.join(' or ')}` : ''}`)
+    // const data = await db.query(`select * from purchases${params.length > 0 ? ` where ${params.join(' or ')}` : ''} order by ${sortBy} ${sortMode} limit ${limit} offset ${offset} `)
+    const data = await db.query(`SELECT purchases.*, suppliers.* FROM purchases LEFT JOIN suppliers ON purchases.supplier = suppliers.supplierid${params.length > 0 ? ` where ${params.join(' or ')}` : ''} order by ${sortBy} ${sortMode} limit ${limit} offset ${offset} `)
+
+    const response = {
+        "draw": Number(req.query.draw),
+        "recordsTotal": total.rows[0].total,
+        "recordsFiltered": total.rows[0].total,
+        "data": data.rows
+      }
+    res.json(response)
+})
+
+router.get('/create', isLoggedIn, async  (req, res, next) => {
+  try {
+    const {userid} = req.session.user
+    const { rows } = await db.query('INSERT INTO purchases(totalsum, operator) VALUES(0, $1) returning *', [userid])
+    res.redirect(`/purchase/show/${rows[0].invoice}`)
+    //console.log(rows);
+  }catch(e){
+    console.log(e);
+
+    res.send(e)
+  }
+})
+
+router.get('/show/:invoice', isLoggedIn, async  (req, res, next) => {
+  try {
+    const {invoice} = req.params 
+    const purchases = await db.query('SELECT p.*, s.* FROM purchases as p LEFT JOIN suppliers as s ON p.supplier = s.supplierid WHERE invoice = $1', [invoice])
+    const users = await db.query(' SELECT * FROM users ORDER BY userid')
+    const {rows : goods} = await db.query('SELECT barcode, name FROM goods ORDER BY barcode')
+    const {rows} = await db.query('SELECT * FROM suppliers ORDER BY supplierid')
+    res.render('purchasePage/form', {
+      currentPage: 'Purchases',
+      user: req.session.user,
+      purchases: purchases.rows[0],
+      goods,
+      users,
+      supplier: rows,
+      moment
     })
-    //akhirDATATABLE
+  }catch(e){
+    res.send(e)
+  }
+})
 
-    //DELETE
-    router.get('/delete/:purchase', isLoggedIn, function (req, res, next) {
-        db.query('DELETE FROM purchases WHERE invoice =$1', [req.params.invoice], (err) => {
-            if (err) return res.send(err, 'error bang')
-            res.redirect('/purchases')
-        });
-    });
-    //akhirDELETE
+router.post('/show/:invoice', isLoggedIn, async (req, res) => {
+  try {
+    const { invoice } = req.params
+    const { totalsum, supplier } = req.body
+    const {userid} = req.session.user
+    await db.query('UPDATE purchases SET totalsum = $1, supplier = $2, operator = $3 WHERE invoice = $4', [totalsum, supplier,userid, invoice])
 
-    //EDIT
-    router.get('/edit/:purchase', isLoggedIn, async function (req, res, next) {
-        try {
-           const {rows: data}= await db.query('SELECT * FROM purchases WHERE invoice =$1', [req.params.purchase])
-                
-             res.render('purchasesPage/edit', { item: data[0] })
-        } catch (error) {
-            console.log(error)
-        }
-        
-    });
+    res.redirect('/purchase')
+  } catch (error) {
+    console.log(error)
+    return res.redirect('/purchase')
+  }
+})
 
-    router.post('/edit/:purchase', isLoggedIn, function (req, res, next) {
-        const purchases = req.params.purchase
-        const { purchase, name, note } = req.body
-        db.query('UPDATE public.purchases SET purchase=$1, name=$2, note=$3 WHERE purchase=$4 ', [purchase, name, note, purchases], (err) => {
-            if (err) {
-                return res.send(err, 'error bang')
-            }
-            res.redirect('/purchases')
-        })
-    })
-    //akhirEDIT
+router.get('/goods/:barcode', isLoggedIn, async (req, res)=> {
+  try{
+    const {barcode} = req.params
+    const {rows} = await db.query('SELECT * FROM goods WHERE barcode = $1', [barcode])
+    res.json(rows[0])
+  }catch(e){
+    res.send(e)
+  }
+})
 
-    //ADD
-    router.get('/add', isLoggedIn, function (req, res, next) {
-        res.render('purchasesPage/add')
+router.post('/additem', isLoggedIn, async (req, res) => {
+  try {
+    const { invoice, itemcode, quantity } = req.body
+    const {rows: n} = await db.query('INSERT INTO purchaseitems (invoice, itemcode, quantity)VALUES ($1, $2, $3)', [invoice, itemcode, quantity]);
+    const { rows } = await db.query('SELECT * FROM purchases WHERE invoice = $1', [invoice])
 
-    });
+  console.log(rows[0])
+  console.log(n)
+  
+    res.json(rows[0])
+  } catch (err) {
+    console.log(err)
+    res.send(err)
+  }
+})
 
-    router.post('/add', isLoggedIn, async function (req, res, next) {
-        try {
-            const { purchase, name, note } = req.body
+router.get('/details/:invoice', isLoggedIn, async (req, res, next) => {
+  try {
+    const { invoice } = req.params
+    const { rows: data } = await db.query('SELECT purchaseitems.*, goods.name FROM purchaseitems LEFT JOIN goods ON purchaseitems.itemcode = goods.barcode WHERE purchaseitems.invoice = $1 ORDER BY purchaseitems.id', [invoice])
 
-            await db.query('INSERT INTO purchases (purchase, name, note) VALUES ($1, $2, $3)', [purchase, name, note])
+    res.json(data)
+  } catch (err) {
+    console.log(err)
+  }
+});
 
-            res.redirect('/purchases')
-        } catch (e) {
-            console.log(e)
-            res.redirect('/purchases')
-        }
-    });
-    //akhirADD
+router.get('/deleteitems/:id', isLoggedIn, async (req, res, next) => {
+  try {
+    const { id } = req.params
+    const { rows: data } = await db.query('DELETE FROM purchaseitems WHERE id = $1 returning *', [id])
+    
+    res.redirect(`/purchase/show/${data[0].invoice}`)
+  } catch (err) {
 
+    console.log(err)
+  }
+});
 
-    return router;
-};
+router.get('/delete/:invoice', isLoggedIn, async (req, res, next) => {
+  try {
+    const { invoice } = req.params
+    await db.query('DELETE FROM purchases WHERE invoice = $1', [invoice])
+  
+    res.redirect('/purchase');
+  } catch (err) {
+    return res.redirect('/purchase')
+  }
+});
+
+  return router
+}

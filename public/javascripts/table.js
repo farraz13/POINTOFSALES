@@ -106,12 +106,12 @@ $(document).ready(function () {
       { "data": "purchaseprice" },
       { "data": "sellingprice" },
       { "data": "unit" },
-      { 
+      {
         "data": "picture",
-        render: function(data){
+        render: function (data) {
           return `<img src="/images/upload/${data}" width="100" /> `
         }
-     },
+      },
       {
         "data": "barcode",
         render: function (data) {
@@ -204,15 +204,20 @@ $(document).ready(function () {
     "ajax": "/purchase/datatable",
     "columns": [
       { "data": "invoice" },
-      { "data": "time" },
-      { "data": "totalsummary" },
+      {
+        "data": "time",
+        render: function(data){
+          return `${moment(data).format('DD MMM YYYY HH:mm:s') }`
+        }
+      },
+      { "data": "totalsum" },
       { "data": "supplier" },
       {
         "data": "invoice",
         render: function (data) {
           return `
                   
-                  <a type="button" href ="/purchase/edit/${data}" class='btn btn-success rounded-circle'><i class="fa-solid fa-circle-info"></i></a>
+                  <a type="button" href ="/purchase/show/${data}" class='btn btn-success rounded-circle'><i class="fa-solid fa-circle-info"></i></a>
                  
 <button type="button" class="btn btn-danger rounded-circle" data-toggle="modal" data-target="#exampleModal${data}">
 <i class="fa-solid fa-trash"></i>
