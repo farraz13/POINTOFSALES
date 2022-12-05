@@ -1,0 +1,67 @@
+<!-- /.container-fluid -->
+
+<%- include('../partials/header') %>
+
+  <body id="page-top">
+
+    <!-- Page Wrapper -->
+    <div id="wrapper">
+      <%- include('../partials/sidebar') %>
+
+
+
+
+        <!-- Content Wrapper -->
+        <div id="content-wrapper" class="d-flex flex-column">
+
+          <!-- Main Content -->
+          <div id="content">
+            <%- include('../partials/topbar') %>
+
+              <!-- Begin Page Content -->
+              <div class="container-fluid">
+
+                <!-- Page Heading -->
+                <h1 class="h3 mb-4 text-gray-800">Sales</h1>
+
+
+                <div class="card mx-1 mx-1">
+                  <a href="/sale/create" class="btn-group col-sm-1 py-3" role="group" aria-label="Basic example">
+                    <span class="btn bg-gradient-primary"><i class="fa-regular fa-plus"></i></span>
+                    <span class="btn btn-primary">Add</span>
+
+                  </a>
+
+
+                  <table id="tableSales" class="table table-bordered">
+                    <thead>
+                      <tr>
+                        <th>invoice</th>
+                        <th>time</th>
+                        <th>total summary</th>
+                        <th>pay</th>
+                        <th>change</th>
+                        <th>customer</th>
+                        <th>Action</th>
+                      </tr>
+                    </thead>
+                    <tfoot>
+                      <tr>
+                        <th>invoice</th>
+                        <th>time</th>
+                        <th>total summary</th>
+                        <th>pay</th>
+                        <th>change</th>
+                        <th>customer</th>
+                        <th>Action</th>
+                      </tr>
+                    </tfoot>
+                  </table>
+
+                </div>
+              </div>
+
+              <%- include('../partials/footer') %>
+          </div>
+         
+          <!-- End of Main Content -->
