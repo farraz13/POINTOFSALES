@@ -129,5 +129,37 @@ router.post('/profile', isLoggedIn, async (req, res) => {
   }
 })
 
+router.get('/changepass', isLoggedIn, async  (req, res, next) => {
+  try {
+    res.render('usersPage/changePass', {
+      success: req.flash('success'),
+      error: req.flash('error'),
+      user: req.session.user,
+    })
+  } catch (e) {
+    res.send(e);
+  }
+});
+
+router.post('/changepass', isLoggedIn, async  (req, res, next) => {
+  try {
+    const user = req.session.user
+    const userid = user.userid
+    const { oldpassword, newpassword, repassword } = req.body
+    const { rows } = await db.query(`SELECT * FROM users WHERE userid = $1`, [userid])
+
+    if (newpassword != repassword)  throw "Retype Password, New password doesn't match"
+    if (!bcrypt.compareSync(oldpassword, rows[0].password)) throw `Your Old password is wrong`
+
+    const hash = bcrypt.hashSync(newpassword, saltRounds)
+    const { s } = await db.query('UPDATE users set password = $1 WHERE userid = $2', [hash, userid])
+    req.flash('success', 'Your password has been updated')
+    res.redirect('/users/changepass')
+  } catch (err) {
+    req.flash('error', err)
+    return res.redirect('/users/changepassword')
+  }
+});
+
 return router;
 };

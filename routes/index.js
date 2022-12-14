@@ -7,8 +7,12 @@ const {isLoggedIn} = require('../helpers/util')
 
 module.exports = (db) => {
   router.get('/', function (req, res, next) {
-    res.render('login')
+    res.render('login',{
+      success: req.flash('success'),
+      error: req.flash('error'),
+      currentPage: 'POS - Login'
   });
+});
   //LOGIN
   router.post('/login', async function (req, res, next) {
     try {
