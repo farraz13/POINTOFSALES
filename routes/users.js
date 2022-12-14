@@ -95,6 +95,39 @@ router.post('/add',  isLoggedIn , async function (req, res, next) {
 });
 //akhirADD
 
+router.get('/profile',  isLoggedIn , function (req, res, next) {
+  try {
+    res.render('usersPage/profile', { success: req.flash('success'), error: req.flash('error'),user: req.session.user })
+    
+  } catch (error) {
+    res.send(err)
+  }
+  // db.query('SELECT * FROM users WHERE userid =$1', [req.params.userid], (err, data) => {
+  //   if (err) return res.send(err, 'error bang')
+  //   if (data.rows.length == 0) return res.send(err, 'data not found')
+  // })
+});
+
+router.post('/profile', isLoggedIn, async (req, res) => {
+  try {
+    const user = req.session.user
+    const userid = user.userid
+    const { email, name } = req.body
+
+    await db.query('UPDATE users SET email = $1, name = $2 WHERE userid = $3 returning *',[email, name, userid])
+
+    const { rows: emails } = await db.query(`SELECT * FROM users WHERE email = $1`,[email])
+    const data = emails[0]
+    req.session.user = data
+    req.session.save()
+    req.flash('success', 'Your profile has been updated')
+    res.redirect('/users/profile')
+  } catch (err) {
+    console.log(err);
+    req.flash('error', 'Can not updated profile')
+    return res.redirect('/users/profile')
+  }
+})
 
 return router;
 };

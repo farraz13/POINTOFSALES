@@ -4,7 +4,8 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var session = require('express-session')
-var fileUpload = require('express-fileupload')
+var fileUpload = require('express-fileupload');
+var flash = require('connect-flash');
 
 
 const { Pool } = require('pg')
@@ -40,6 +41,7 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+app.use(flash());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(session({
   secret: 'rubicamp',

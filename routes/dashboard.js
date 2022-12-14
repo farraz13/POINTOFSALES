@@ -95,9 +95,10 @@ router.get('/earnoverview', async (req, res, next) => {
             const { rows: totalsales } = await db.query("SELECT to_char(time, 'Mon YY') AS monthly, to_char(time, 'YYMM') AS forsort, sum(totalsum) AS totalsales FROM sales WHERE time BETWEEN $1 AND $2 GROUP BY monthly, forsort ORDER BY forsort", [startdate, enddate])
 
             let getMonth = []
+            
 
-            for (let i = 0; i < totalpurchase.length; i++) {
-                getMonth.push(totalpurchase[i].monthly)
+            for (let i = 0; i < totalsales.length; i++) {
+                getMonth.push(totalsales[i].monthly)
             }
 
             let data = totalpurchase.concat(totalsales)
@@ -115,6 +116,7 @@ router.get('/earnoverview', async (req, res, next) => {
             for (const key in newData) {
                 income.push(Number(newData[key].revenue - newData[key].expense))
             }
+            console.log(getMonth)
 
             res.json({ getMonth, income })
         } else if (startdate) {
@@ -124,8 +126,8 @@ router.get('/earnoverview', async (req, res, next) => {
 
             let getMonth = []
 
-            for (let i = 0; i < totalpurchase.length; i++) {
-                getMonth.push(totalpurchase[i].monthly)
+            for (let i = 0; i < totalsales.length; i++) {
+                getMonth.push(totalsales[i].monthly)
             }
 
             let data = totalpurchase.concat(totalsales)
@@ -180,8 +182,8 @@ router.get('/earnoverview', async (req, res, next) => {
 
             let getMonth = []
 
-            for (let i = 0; i < totalpurchase.length; i++) {
-                getMonth.push(totalpurchase[i].monthly)
+            for (let i = 0; i < totalsales.length; i++) {
+                getMonth.push(totalsales[i].monthly)
             }
 
             let data = totalpurchase.concat(totalsales)
