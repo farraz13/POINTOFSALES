@@ -26,6 +26,8 @@ var purchaseRouter = require('./routes/purchase')(pool);
 var customersRouter = require('./routes/customers')(pool);
 var saleRouter = require('./routes/sale')(pool);
 var dashboardRouter = require('./routes/dashboard')(pool);
+var notificationsRouter = require('./routes/notifications')(pool);
+
 
 
 
@@ -59,6 +61,8 @@ app.use('/suppliers', suppliersRouter);
 app.use('/customers', customersRouter);
 app.use('/sale', saleRouter);
 app.use('/dashboard', dashboardRouter);
+app.use('/notifications', notificationsRouter);
+
 
 
 
