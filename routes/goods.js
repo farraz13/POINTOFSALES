@@ -1,10 +1,11 @@
 var express = require('express');
 var router = express.Router();
 const path = require('path');
+const { isAdmin } = require('../helpers/util');
 
 module.exports = (db) => {
-    router.get('/', function (req, res, next) {
-        res.render('goodsPage/list');
+    router.get('/', isAdmin,function (req, res, next) {
+        res.render('goodsPage/list' ,{user: req.session.user});
     });
 
     //DATATABLE
@@ -52,12 +53,12 @@ module.exports = (db) => {
     //akhirDELETE
 
     //EDIT
-    router.get('/edit/:barcode', async function (req, res, next) {
+    router.get('/edit/:barcode',isAdmin, async function (req, res, next) {
         try {
             const { rows: data } = await db.query('SELECT * FROM goods WHERE barcode =$1', [req.params.barcode])
             const { rows: unit } = await db.query('SELECT * FROM units')
 
-            res.render('goodsPage/edit', { item: data[0], units: unit })
+            res.render('goodsPage/edit', { item: data[0], units: unit, user:req.session.user })
         } catch (error) {
             console.log(error)
         }
@@ -105,10 +106,10 @@ module.exports = (db) => {
     //akhirEDIT
 
     //ADD
-    router.get('/add', async function (req, res, next) {
+    router.get('/add', isAdmin, async function (req, res, next) {
         const { rows: unit } = await db.query('SELECT * FROM units')
 
-        res.render('goodsPage/add', { units: unit })
+        res.render('goodsPage/add', { units: unit, user:req.session.user })
 
     });
 

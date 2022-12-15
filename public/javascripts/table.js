@@ -48,7 +48,7 @@ $(document).ready(function () {
   });
 
   $('#tableUnits').DataTable({
-    "lengthMenu": [[3, 5, 10, -1], [3, 5, 10, "All"]],
+    "lengthMenu": [[3, 5, 100, -1], [3, 5, 10, 100]],
     "processing": true,
     "serverSide": true,
     "ajax": "/units/datatable",

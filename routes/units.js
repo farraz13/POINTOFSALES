@@ -1,10 +1,11 @@
 var express = require('express');
-const { isLoggedIn } = require('../helpers/util');
+const { isLoggedIn, isAdmin } = require('../helpers/util');
 var router = express.Router();
 
 module.exports = (db) => {
-    router.get('/', function (req, res, next) {
-        res.render('unitsPage/list');
+    router.get('/', isAdmin,function (req, res, next) {
+        console.log(req.session.user)
+        res.render('unitsPage/list', {user:req.session.user});
     });
 
     //DATATABLE
@@ -39,7 +40,7 @@ module.exports = (db) => {
     //akhirDATATABLE
 
     //DELETE
-    router.get('/delete/:unit', isLoggedIn, function (req, res, next) {
+    router.get('/delete/:unit', isAdmin, function (req, res, next) {
         db.query('DELETE FROM units WHERE unit =$1', [req.params.unit], (err) => {
             if (err) return res.send(err, 'error bang')
             res.redirect('/units')
@@ -48,18 +49,18 @@ module.exports = (db) => {
     //akhirDELETE
 
     //EDIT
-    router.get('/edit/:unit', isLoggedIn, async function (req, res, next) {
+    router.get('/edit/:unit', isAdmin, async function (req, res, next) {
         try {
            const {rows: data}= await db.query('SELECT * FROM units WHERE unit =$1', [req.params.unit])
                 
-             res.render('unitsPage/edit', { item: data[0] })
+             res.render('unitsPage/edit', { item: data[0], user:req.session.user })
         } catch (error) {
             console.log(error)
         }
         
     });
 
-    router.post('/edit/:unit', isLoggedIn, function (req, res, next) {
+    router.post('/edit/:unit', isAdmin, function (req, res, next) {
         const units = req.params.unit
         const { unit, name, note } = req.body
         db.query('UPDATE public.units SET unit=$1, name=$2, note=$3 WHERE unit=$4 ', [unit, name, note, units], (err) => {
@@ -72,12 +73,12 @@ module.exports = (db) => {
     //akhirEDIT
 
     //ADD
-    router.get('/add', isLoggedIn, function (req, res, next) {
-        res.render('unitsPage/add')
+    router.get('/add', isAdmin, function (req, res, next) {
+        res.render('unitsPage/add',{user:req.session.user})
 
     });
 
-    router.post('/add', isLoggedIn, async function (req, res, next) {
+    router.post('/add', isAdmin, async function (req, res, next) {
         try {
             const { unit, name, note } = req.body
 

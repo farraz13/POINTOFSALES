@@ -4,7 +4,7 @@ var router = express.Router();
 
 module.exports = (db) => {
     router.get('/', function (req, res, next) {
-        res.render('suppliersPage/list');
+        res.render('suppliersPage/list', {user:req.session.user});
     });
 
     //DATATABLE
@@ -52,7 +52,7 @@ module.exports = (db) => {
         try {
            const {rows: data}= await db.query('SELECT * FROM suppliers WHERE supplierid =$1', [req.params.supplierid])
                 
-             res.render('suppliersPage/edit', { item: data[0] })
+             res.render('suppliersPage/edit', { item: data[0], user:req.session.user })
         } catch (error) {
             console.log(error)
         }
@@ -73,7 +73,7 @@ module.exports = (db) => {
 
     //ADD
     router.get('/add', isLoggedIn, function (req, res, next) {
-        res.render('suppliersPage/add')
+        res.render('suppliersPage/add', {user:req.session.user})
 
     });
 

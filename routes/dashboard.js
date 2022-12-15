@@ -1,9 +1,10 @@
 var express = require('express');
 var router = express.Router();
 const currencyFormatter = require('currency-formatter');
+const { isAdmin } = require('../helpers/util');
 
 module.exports = (db) => {
-  router.get('/', async (req, res, next) => {
+  router.get('/',isAdmin , async (req, res, next) => {
     try {
       const { rows: purchases } = await db.query(
         'SELECT sum(totalsum) AS total FROM purchases'
